@@ -8,7 +8,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 import joblib
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import os
 from huggingface_hub import login
 import warnings
@@ -23,13 +23,15 @@ token = os.getenv("Huggingface")
 
 login(token)
 
+bnb_config = BitsAndBytesConfig(load_in_8bit=True)
+
 try:
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", model_max_length=512)
-    llama_model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", device_map="auto", torch_dtype=torch.float16)
+    llama_model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", device_map="auto", quantization_config = bnb_config)
 except Exception as e:
     print("Llama 2 model unavailable. Falling back to Mistral-7B.")
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", model_max_length=512)
-    llama_model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", device_map="auto", torch_dtype=torch.float16)
+    llama_model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", device_map="auto", quantization_config = bnb_config)
 
 
 X_train = pd.read_csv("./data/processed/X_train.csv")

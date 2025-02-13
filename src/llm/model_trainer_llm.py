@@ -27,11 +27,11 @@ bnb_config = BitsAndBytesConfig(load_in_8bit=True)
 
 try:
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", model_max_length=512)
-    llama_model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", device_map="auto", quantization_config = bnb_config)
+    llama_model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", device_map="cpu",torch_dtype='auto')
 except Exception as e:
     print("Llama 2 model unavailable. Falling back to Mistral-7B.")
     tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-chat-hf", model_max_length=512)
-    llama_model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", device_map="auto", quantization_config = bnb_config)
+    llama_model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-chat-hf", device_map="cpu", torch_dtype='auto')
 
 
 X_train = pd.read_csv("./data/processed/X_train.csv")
